@@ -13,7 +13,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Label label = new Label("Hola, JavaFX");
-        Scene scene = new Scene(label);
+        Scene scene = new Scene(label, 400, 300);
         stage.setScene(scene);
         stage.show();
     }
