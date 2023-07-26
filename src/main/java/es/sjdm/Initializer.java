@@ -62,6 +62,7 @@ public class Initializer extends Application {
 
         stage.show();
 */
-        vista.creaGUIa();
+
+        vista.creaGUIa(stage);
     }
 }
