@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>es.uji.belfern</groupId>
-    <artifactId>HolaJavaFX</artifactId>
+    <groupId>es.sjdm</groupId>
+    <artifactId>Library</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
 
@@ -30,7 +30,7 @@
                 <artifactId>javafx-maven-plugin</artifactId>
                 <version>0.0.3</version>
                 <configuration>
-                    <mainClass>es.uji.belfern.main.Main</mainClass>
+                    <mainClass>es.sjdm.Initializer</mainClass>
                 </configuration>
             </plugin>
         </plugins>
