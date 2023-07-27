@@ -4,14 +4,6 @@ import es.sjdm.mvc.controller.Controlador;
 import es.sjdm.mvc.model.Modelo;
 import es.sjdm.mvc.view.Vista;
 import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -62,7 +54,10 @@ public class Initializer extends Application {
 
         stage.show();
 */
+        controlador.setVista(vista);
 
-        vista.creaGUIa(stage);
+        vista.setControlador(controlador);
+        vista.setModelo(modelo);
+        vista.startStartingWindow(stage);
     }
 }

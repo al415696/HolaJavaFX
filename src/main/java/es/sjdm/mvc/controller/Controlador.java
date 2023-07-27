@@ -11,6 +11,7 @@ public class Controlador implements Controller{
     }
 
     public void AbreVentana(String cod){
+        vista.cierraVentana();
         Stage stage = new Stage();
         vista.decoraVentana(stage,cod);
     }
