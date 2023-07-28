@@ -6,6 +6,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -46,7 +48,7 @@ public class Vista implements InterrogaVista, InformaVista {
         estilizadoVista.estilizaBotonGrande(sociosButton);
         Button regEntButton = new Button("Registro\nentrada");
         regEntButton.setOnAction(e -> {
-            controlador.AbreVentana("b1");
+            controlador.abreVentana("b1");
             //controlador.selectAlgorithm(0);
             //setIfReady();
         });
@@ -83,6 +85,7 @@ public class Vista implements InterrogaVista, InformaVista {
         Button historialButton = new Button("Historial");
         estilizadoVista.estilizaBotonGrande(historialButton);
         Button anyadirButton = new Button("Añadir");
+        anyadirButton.setOnAction(e -> controlador.abreVentana("b2"));
         estilizadoVista.estilizaBotonGrande(anyadirButton);
         Button anyadirAvanzadoButton = new Button("Añadir\navanzado");
         anyadirAvanzadoButton.setTextAlignment(TextAlignment.CENTER);
@@ -102,9 +105,39 @@ public class Vista implements InterrogaVista, InformaVista {
         currentStage.setScene(scene);
 
         currentStage.show();
-        currentStage.setOnCloseRequest(e-> controlador.AbreVentana("a"));
+        currentStage.setOnCloseRequest(e-> controlador.abreVentana("a"));
     }
 
+    private void creaGUIb2(Stage currentStage){
+        this.currentStage = currentStage;
+        currentStage.setTitle("Añadir al registro de hoy");
+        //Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+
+        StackPane root = new StackPane();
+        Button aceptarButton = new Button("Aceptar");
+        //estilizadoVista.estilizaBotonGrande(aceptarButton);
+        TextField textField = new TextField();
+        HBox hBox = new HBox(textField,aceptarButton);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(30);
+        hBox.setPadding(new Insets(0, 0, 0, 0));
+
+
+        Label label = new Label("Esperando para añadir...");
+        VBox vBox = new VBox(hBox, label);
+
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(25);
+
+
+        root.getChildren().add(vBox);
+
+        Scene scene = new Scene(root, 350, 250);
+        currentStage.setScene(scene);
+
+        currentStage.show();
+        currentStage.setOnCloseRequest(e-> controlador.abreVentana("b1"));
+    }
     @Override
     public void decoraVentana(Stage stage, String cod) {
     switch (cod){
@@ -113,6 +146,10 @@ public class Vista implements InterrogaVista, InformaVista {
             break;
         case "b1":
             creaGUIb1(stage);
+            break;
+        case "b2":
+            creaGUIb2(stage);
+            break;
 
     }
     }
