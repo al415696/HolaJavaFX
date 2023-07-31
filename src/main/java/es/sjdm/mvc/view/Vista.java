@@ -106,6 +106,9 @@ public class Vista implements InterrogaVista, InformaVista {
 
         currentStage.show();
         currentStage.setOnCloseRequest(e-> controlador.abreVentana("a"));
+
+
+        modelo.prueba();
     }
 
     private void creaGUIb2(Stage currentStage){
