@@ -4,6 +4,7 @@ import es.sjdm.mvc.model.CambiaModelo;
 import es.sjdm.mvc.view.InformaVista;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 
 public class Controlador implements Controller{
@@ -25,7 +26,8 @@ public class Controlador implements Controller{
         vista.decoraVentana(stage,cod);
     }
 
-    public void anyadeARegistro(String nombre, Calendar fecha){
-
-    }
+    public void anyadeARegistro(String nombre, LocalDate fecha){
+        //fecha.getMonth();
+        modelo.anyadeARegistro(nombre, fecha);
+        }
 }
