@@ -27,7 +27,6 @@ public class Controlador implements Controller{
     }
 
     public void anyadeARegistro(String nombre, LocalDate fecha){
-        //fecha.getMonth();
         modelo.anyadeARegistro(nombre, fecha);
         }
 }

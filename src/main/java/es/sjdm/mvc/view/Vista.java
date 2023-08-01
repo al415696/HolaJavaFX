@@ -14,6 +14,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
+import java.time.LocalDate;
+
 public class Vista implements InterrogaVista, InformaVista {
     private Controller controlador;
     public void setControlador(final Controller controlador) {
@@ -58,6 +60,7 @@ public class Vista implements InterrogaVista, InformaVista {
         hBox.setSpacing(60);
 
         Button estadButton = new Button("Estadisticas");
+        estadButton.setOnAction(e -> modelo.prueba());
         HBox hBoxEstad = new HBox(estadButton);
         hBoxEstad.setAlignment(Pos.BOTTOM_RIGHT);
 
@@ -116,9 +119,15 @@ public class Vista implements InterrogaVista, InformaVista {
         //Scene scene = new Scene(fxmlLoader.load(), 320, 240);
 
         StackPane root = new StackPane();
-        Button aceptarButton = new Button("Aceptar");
+
         //estilizadoVista.estilizaBotonGrande(aceptarButton);
         TextField textField = new TextField();
+        Button aceptarButton = new Button("Aceptar");
+        aceptarButton.setOnAction(e-> {
+            if(textField.getText().length() > 0){
+                controlador.anyadeARegistro(textField.getText(), LocalDate.now());
+            }
+        });
         HBox hBox = new HBox(textField,aceptarButton);
         hBox.setAlignment(Pos.CENTER);
         hBox.setSpacing(30);
