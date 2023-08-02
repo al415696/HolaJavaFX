@@ -3,7 +3,6 @@ package es.sjdm.mvc.model;
 //import org.jopendocument.dom.spreadsheet.Sheet;
 
 import org.jopendocument.dom.ODPackage;
-import org.jopendocument.dom.OOUtils;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
 
@@ -11,10 +10,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.util.Date;
 import java.util.NoSuchElementException;
 
 public class Modelo implements InterrogaModelo,CambiaModelo {
@@ -71,11 +68,16 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
         int i = 1;
         //BUSCA UN ESPACIO LIBRE Y ESCRIBE AHI EL NOMBRE
         //while (!registroActual.getCellAt(dom,i).isEmpty()){
-        while (!registroActual.getCellAt(dom,i).isValid()){
+        while (!registroActual.getCellAt(dom,i).isEmpty()){
             i++;
             if (i > 2000) throw new RuntimeException();
         }
         registroActual.getCellAt(dom,i).setValue(nombre);
+        try{
+            registroActual.getSpreadSheet().saveAs(file);
+        } catch (IOException e ){
+
+        }
 
     }
     private void getSheetFor(LocalDate fecha){
@@ -85,15 +87,15 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
             try {
 
             TableModel model = new DefaultTableModel();
-            final File file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
+            file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
             SpreadSheet.createEmpty(model).saveAs(file);
 
-            Sheet sheet = SpreadSheet.get(new ODPackage(file)).getFirstSheet();
-            sheet.setName(getNameOfMonth(fecha));
-            Sheet temporal = registroActual;
-            registroActual = sheet;
-            formatizaSheet(fecha);
-            registroActual = temporal;
+            //Sheet sheet = SpreadSheet.get(new ODPackage(file)).getFirstSheet();
+            registro = SpreadSheet.createFromFile(file);
+            registroActual = registro.getFirstSheet();
+            registroActual.setName(getNameOfMonth(fecha));
+            formatizaSheetRegistro(fecha);
+            registroActual.getSpreadSheet().saveAs(file);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -103,27 +105,29 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
         }
         //CARGA LA SPREADSHEET EN LA VARIABLE
         try {
-            registro = SpreadSheet.get(new ODPackage(new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods")));
+            file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
+            registro = SpreadSheet.createFromFile(file);
+            //registro = SpreadSheet.get(new ODPackage(new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods")));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("No se pudo encontrar Sheet");
             throw new RuntimeException(e);
         }
         //SI NO EXISTE LA SHEET, CREALA (Y FORMATIZALA)
-        if (!existsSheet(fecha)){
+        if (!existsSheetRegistro(fecha)){
             System.out.println("No existe la sheet");
             registro.addSheet(getNameOfMonth(fecha));
             registroActual = registro.getSheet(getNameOfMonth(fecha));
             //formatizaSheet(registro.getSheet(getNameOfMonth(fecha)),fecha);
-            formatizaSheet(fecha);
+            formatizaSheetRegistro(fecha);
         }
         //CARGA LA SHEET EN MEMORIA, COMPLETANDO LA FUNCIÓN DEL MÉTODO
-        System.out.println("registro concedido");
-        System.out.println(registro.getSheet(getNameOfMonth(fecha)).getName() + "existe");
+        //System.out.println("registro concedido");
+        //System.out.println(registro.getSheet(getNameOfMonth(fecha)).getName() + "existe");
         registroActual = registro.getSheet(getNameOfMonth(fecha));
 
     }
-    private boolean existsSheet(LocalDate fecha) {
+    private boolean existsSheetRegistro(LocalDate fecha) {
         try {
             registro.getSheet(getNameOfMonth(fecha),true);
 
@@ -135,23 +139,23 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
             return false;
         }
     }
-    private void formatizaSheet(LocalDate fecha){
+    private void formatizaSheetRegistro(LocalDate fecha){
 
         YearMonth yearMonthObject = YearMonth.of(fecha.getYear(), fecha.getMonth());
         int daysInMonth = yearMonthObject.lengthOfMonth();
-        System.out.println(registroActual.getName());
-        System.out.println("Header column: " + registroActual.getHeaderColumnCount());
+        //System.out.println(registroActual.getName());
+        //System.out.println("Header column: " + registroActual.getHeaderColumnCount());
 
         registroActual.ensureRowCount(50);
-        System.out.println(daysInMonth);
-        System.out.println(registroActual.getColumnCount());
+        //System.out.println(daysInMonth);
+        //System.out.println(registroActual.getColumnCount());
         for (int i = 0; i < daysInMonth; i++) {
             try{
                 registroActual.setColumnCount(daysInMonth);
-                System.out.println(registroActual.getCellAt(i,0).getValue());
+               // System.out.println(registroActual.getCellAt(i,0).getValue());
                 registroActual.getCellAt(i,0).setValue( i+1 );
-                System.out.println(registroActual.getCellAt(i,0).getValue());
-                System.out.println("Funciona");
+                //System.out.println(registroActual.getCellAt(i,0).getValue());
+                //System.out.println("Funciona");
             }
             catch (Exception e){
 
@@ -241,10 +245,13 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
 
             Sheet sheet = SpreadSheet.createFromFile(file).getFirstSheet();
             sheet.setName(getNameOfMonth(fecha));
+            registro = sheet.getSpreadSheet();
             Sheet temporal = registroActual;
             registroActual = sheet;
-            formatizaSheet(fecha);
+            formatizaSheetRegistro(fecha);
             registroActual = temporal;
+            registro.addSheet("prueba");
+
             sheet.getSpreadSheet().saveAs(file);
 
         } catch (IOException e) {
