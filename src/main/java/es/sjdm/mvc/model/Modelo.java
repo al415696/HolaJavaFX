@@ -2,6 +2,7 @@ package es.sjdm.mvc.model;
 
 //import org.jopendocument.dom.spreadsheet.Sheet;
 
+import es.sjdm.mvc.view.InformaVista;
 import org.jopendocument.dom.ODPackage;
 import org.jopendocument.dom.spreadsheet.Sheet;
 import org.jopendocument.dom.spreadsheet.SpreadSheet;
@@ -12,9 +13,15 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 public class Modelo implements InterrogaModelo,CambiaModelo {
+    private InformaVista vista;
+    public void setVista(InformaVista vista) {
+        this.vista = vista;
+    }
     private Sheet registroActual;
     private SpreadSheet registro;
     File file;
@@ -75,19 +82,21 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
         registroActual.getCellAt(dom,i).setValue(nombre);
         try{
             registroActual.getSpreadSheet().saveAs(file);
-        } catch (IOException e ){
+            vista.anyadidoRegistro(0,nombre);
 
+        } catch (IOException e ){
+            vista.anyadidoRegistro(1,nombre);
         }
 
     }
     private void getSheetFor(LocalDate fecha){
         //SI NO EXISTE EL FICHERO, LO CREA
-        if (!new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods").exists()){
+        if (!new File("src"+File.separator+"files"+File.separator+"Registro" + File.separator + "REGISTRO_AUTO_"+fecha.getYear() +".ods").exists()){
             System.out.println("no existe el archivo");
             try {
 
             TableModel model = new DefaultTableModel();
-            file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
+            file = new File("src"+File.separator+"files"+File.separator+"Registro" + File.separator + "REGISTRO_AUTO_"+fecha.getYear() +".ods");
             SpreadSheet.createEmpty(model).saveAs(file);
 
             //Sheet sheet = SpreadSheet.get(new ODPackage(file)).getFirstSheet();
@@ -100,18 +109,20 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
             } catch (IOException e) {
                 e.printStackTrace();
                 System.out.println("No se pudo crear fichero");
-                throw new RuntimeException(e);
+                vista.anyadidoRegistro(2 , "");
+                //throw new RuntimeException(e);
             }
         }
         //CARGA LA SPREADSHEET EN LA VARIABLE
         try {
-            file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
+            file = new File("src"+File.separator+"files"+File.separator+"Registro" + File.separator + "REGISTRO_AUTO_"+fecha.getYear() +".ods");
             registro = SpreadSheet.createFromFile(file);
             //registro = SpreadSheet.get(new ODPackage(new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods")));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("No se pudo encontrar Sheet");
-            throw new RuntimeException(e);
+            vista.anyadidoRegistro(3 , "");
+            //throw new RuntimeException(e);
         }
         //SI NO EXISTE LA SHEET, CREALA (Y FORMATIZALA)
         if (!existsSheetRegistro(fecha)){
@@ -158,7 +169,7 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
                 //System.out.println("Funciona");
             }
             catch (Exception e){
-
+                vista.anyadidoRegistro(4 , "");
                 System.out.println("Datos:");
                 System.out.println(registroActual.getName());
                 System.out.println("colCountAntes?: "+registroActual.getColumnCount());
@@ -205,6 +216,19 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
                 return "EXTRA(ERROR EN CODIGO)";
         }
     }
+
+    @Override
+    public List<String> getListOfRegistros() {
+        File regFile = new File("src"+File.separator+"files"+File.separator+"Registro" );
+        //return regFile.listFiles();
+        List<String> returnedFiles = new ArrayList();
+        for (File f : regFile.listFiles()){
+            returnedFiles.add(f.getPath());
+        }
+        return returnedFiles;
+        //return null;
+    }
+
     public void prueba(){
         /*
         try {
@@ -240,7 +264,7 @@ public class Modelo implements InterrogaModelo,CambiaModelo {
         try {
             LocalDate fecha = LocalDate.now();
             TableModel model = new DefaultTableModel();
-            final File file = new File("src"+File.separator+"files"+File.separator+"REGISTRO_AUTO_"+fecha.getYear() +".ods");
+            final File file = new File("src"+File.separator+"files"+File.separator+"Registro" + File.separator + "REGISTRO_AUTO_"+fecha.getYear() +".ods");
             SpreadSheet.createEmpty(model).saveAs(file);
 
             Sheet sheet = SpreadSheet.createFromFile(file).getFirstSheet();

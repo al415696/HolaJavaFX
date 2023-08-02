@@ -54,6 +54,8 @@ public class Initializer extends Application {
 
         stage.show();
 */
+        modelo.setVista(vista);
+
         controlador.setVista(vista);
         controlador.setModelo(modelo);
 

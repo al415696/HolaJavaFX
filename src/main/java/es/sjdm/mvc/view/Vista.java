@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -28,12 +29,40 @@ public class Vista implements InterrogaVista, InformaVista {
     }
     private Stage currentStage;
 
+    @Override
     public void cierraVentana(){
         currentStage.close();
     }
     public void startStartingWindow(Stage startingStage){
         creaGUIa(startingStage);
     }
+
+
+    Label labelRegistro;
+    @Override
+    public void anyadidoRegistro(int codEstado, String nombre) {
+        switch (codEstado){
+            case 0:
+                labelRegistro.setText(nombre + " ha sido añadid@ correctamente");
+                break;
+            case 1:
+                labelRegistro.setText(nombre + " no se ha podido añadir");
+                break;
+
+            case 2:
+                labelRegistro.setText("No se ha podido crear el fichero del año correspondiente");
+                break;
+            case 3:
+                labelRegistro.setText("No se ha podido crear la hoja del mes correspondiente");
+                break;
+            case 4:
+                labelRegistro.setText("No se ha podido formatear la hoja del mes correspondiente");
+                break;
+
+        }
+    }
+
+
     public Vista(Stage mainStage) {
         this.currentStage = mainStage;
     }
@@ -92,6 +121,7 @@ public class Vista implements InterrogaVista, InformaVista {
         estilizadoVista.estilizaBotonGrande(anyadirButton);
         Button anyadirAvanzadoButton = new Button("Añadir\navanzado");
         anyadirAvanzadoButton.setTextAlignment(TextAlignment.CENTER);
+        anyadirAvanzadoButton.setOnAction(e -> controlador.abreVentana("b3"));
         estilizadoVista.estilizaBotonGrande(anyadirAvanzadoButton);
         VBox vBox = new VBox(historialButton, anyadirAvanzadoButton);
 
@@ -125,7 +155,9 @@ public class Vista implements InterrogaVista, InformaVista {
         Button aceptarButton = new Button("Aceptar");
         aceptarButton.setOnAction(e-> {
             if(textField.getText().length() > 0){
+
                 controlador.anyadeARegistro(textField.getText(), LocalDate.now());
+                textField.setText("");
             }
         });
         HBox hBox = new HBox(textField,aceptarButton);
@@ -134,8 +166,47 @@ public class Vista implements InterrogaVista, InformaVista {
         hBox.setPadding(new Insets(0, 0, 0, 0));
 
 
-        Label label = new Label("Esperando para añadir...");
-        VBox vBox = new VBox(hBox, label);
+        labelRegistro = new Label("Esperando para añadir...");
+        VBox vBox = new VBox(hBox, labelRegistro);
+
+        vBox.setAlignment(Pos.CENTER);
+        vBox.setSpacing(25);
+
+
+        root.getChildren().add(vBox);
+
+        Scene scene = new Scene(root, 350, 250);
+        currentStage.setScene(scene);
+
+        currentStage.show();
+        currentStage.setOnCloseRequest(e-> controlador.abreVentana("b1"));
+    }
+    private void creaGUIb3(Stage currentStage){
+        this.currentStage = currentStage;
+        currentStage.setTitle("Añadir al registro de cualquier dia");
+        //Scene scene = new Scene(fxmlLoader.load(), 320, 240);
+
+        StackPane root = new StackPane();
+
+        //estilizadoVista.estilizaBotonGrande(aceptarButton);
+        TextField textFieldNombre = new TextField();
+        DatePicker datePicker = new DatePicker(LocalDate.now());
+        Button aceptarButton = new Button("Aceptar");
+        aceptarButton.setOnAction(e-> {
+            if(textFieldNombre.getText().length() > 0){
+
+                controlador.anyadeARegistro(textFieldNombre.getText(), datePicker.getValue());
+                textFieldNombre.setText("");
+            }
+        });
+        HBox hBox = new HBox(textFieldNombre,aceptarButton);
+        hBox.setAlignment(Pos.CENTER);
+        hBox.setSpacing(30);
+        hBox.setPadding(new Insets(0, 0, 0, 0));
+
+
+        labelRegistro = new Label("Esperando para añadir...");
+        VBox vBox = new VBox(hBox,datePicker, labelRegistro);
 
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(25);
@@ -160,6 +231,9 @@ public class Vista implements InterrogaVista, InformaVista {
             break;
         case "b2":
             creaGUIb2(stage);
+            break;
+        case "b3":
+            creaGUIb3(stage);
             break;
 
     }
